@@ -2,33 +2,43 @@ import create from "zustand";
 
 export const useRecipeStore = create((set) => ({
   recipes: [],
-  searchTerm: "",
-  filteredRecipes: [],
+  favorites: [],
+  recommendations: [],
 
-  addRecipe: (newRecipe) =>
-    set((state) => ({ recipes: [...state.recipes, newRecipe] })),
 
-  deleteRecipe: (id) =>
+  addFavorite: (recipeId) =>
     set((state) => ({
-      recipes: state.recipes.filter((recipe) => recipe.id !== id),
-      filteredRecipes: state.filteredRecipes.filter((recipe) => recipe.id !== id),
+      favorites: state.favorites.includes(recipeId)
+        ? state.favorites
+        : [...state.favorites, recipeId],
     })),
 
-  updateRecipe: (id, updatedRecipe) =>
+  removeFavorite: (recipeId) =>
     set((state) => ({
-      recipes: state.recipes.map((recipe) =>
-        recipe.id === id ? { ...recipe, ...updatedRecipe } : recipe
-      ),
-      filteredRecipes: state.filteredRecipes.map((recipe) =>
-        recipe.id === id ? { ...recipe, ...updatedRecipe } : recipe
-      ),
+      favorites: state.favorites.filter((id) => id !== recipeId),
     })),
 
-  setSearchTerm: (term) =>
+  generateRecommendations: () =>
     set((state) => {
-      const filtered = state.recipes.filter((recipe) =>
-        recipe.title.toLowerCase().includes(term.toLowerCase())
+      const favRecipes = state.recipes.filter((r) =>
+        state.favorites.includes(r.id)
       );
-      return { searchTerm: term, filteredRecipes: filtered };
+
+      let recommended = [];
+      if (favRecipes.length > 0) {
+        const favWords = favRecipes
+          .flatMap((r) => r.title.toLowerCase().split(" "))
+          .filter((w) => w.length > 3);
+
+        recommended = state.recipes.filter(
+          (r) =>
+            !state.favorites.includes(r.id) &&
+            favWords.some((word) =>
+              r.title.toLowerCase().includes(word.toLowerCase())
+            )
+        );
+      }
+
+      return { recommendations: recommended };
     }),
 }));

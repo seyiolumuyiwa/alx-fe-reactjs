@@ -11,6 +11,8 @@ import AddRecipeForm from './components/AddRecipeForm';
 import RecipeDetails from './components/RecipeDetails';
 import EditRecipeForm from './components/EditRecipeForm';
 import SearchBar from "./components/SearchBar";
+import FavoritesList from "./components/FavoritesList";
+import RecommendationsList from "./components/RecommendationsList";
 function App() {
   const [count, setCount] = useState(0)
 
@@ -47,6 +49,8 @@ function App() {
                 <AddRecipeForm />
                 <RecipeList />
                 <SearchBar />
+                <FavoritesList />
+        <RecommendationsList />
               </>
             }
           />
