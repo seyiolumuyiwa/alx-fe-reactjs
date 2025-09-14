@@ -19,6 +19,9 @@ return (
 <p>{recipe.description}</p>
 
 
+<p><strong>ID:</strong> {recipe.id}</p>
+
+
 <div style={{ marginTop: 12 }}>
 <Link to={`/recipes/${recipeId}/edit`}>Edit</Link>
 <DeleteRecipeButton id={recipeId} />
