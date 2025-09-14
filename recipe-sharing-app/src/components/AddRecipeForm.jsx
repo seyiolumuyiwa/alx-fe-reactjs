@@ -1,38 +1,49 @@
-import { useState } from 'react';
-import { useRecipeStore } from './recipeStore';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useRecipeStore } from '../store/recipeStore';
 
-const AddRecipeForm = () => {
-  const addRecipe = useRecipeStore((state) => state.addRecipe);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (!title.trim() || !description.trim()) return;
+export default function AddRecipeForm() {
+const addRecipe = useRecipeStore((s) => s.addRecipe);
+const [title, setTitle] = useState('');
+const [description, setDescription] = useState('');
+const navigate = useNavigate();
 
-    addRecipe({ id: Date.now(), title, description });
-    setTitle('');
-    setDescription('');
-  };
 
-  return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Recipe Title"
-        style={{ marginRight: '10px' }}
-      />
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Recipe Description"
-        style={{ marginRight: '10px' }}
-      />
-      <button type="submit">Add Recipe</button>
-    </form>
-  );
+const handleSubmit = (e) => {
+e.preventDefault();
+if (!title.trim() || !description.trim()) return;
+const id = Date.now();
+const newRecipe = { id, title: title.trim(), description: description.trim() };
+addRecipe(newRecipe);
+setTitle('');
+setDescription('');
+
+
+navigate(`/recipes/${id}`);
 };
 
-export default AddRecipeForm;
+
+return (
+<form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
+<div style={{ marginBottom: 8 }}>
+<input
+placeholder="Title"
+value={title}
+onChange={(e) => setTitle(e.target.value)}
+style={{ padding: 8, width: '100%' }}
+/>
+</div>
+<div style={{ marginBottom: 8 }}>
+<textarea
+placeholder="Description"
+value={description}
+onChange={(e) => setDescription(e.target.value)}
+rows={4}
+style={{ padding: 8, width: '100%' }}
+/>
+</div>
+<button type="submit">Add Recipe</button>
+</form>
+);
+}
