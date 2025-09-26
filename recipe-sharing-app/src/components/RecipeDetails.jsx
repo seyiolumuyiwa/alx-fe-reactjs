@@ -1,36 +1,36 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useRecipeStore } from '../store/recipeStore';
+import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useRecipeStore } from '../recipeStore';
+import EditRecipeForm from './EditRecipeForm';
 import DeleteRecipeButton from './DeleteRecipeButton';
 
+const RecipeDetails = () => {
+  const { id } = useParams();
+  const recipe = useRecipeStore((state) => state.recipes.find((r) => String(r.id) === String(id)));
+  const [editing, setEditing] = useState(false);
 
-export default function RecipeDetails() {
-const { id } = useParams();
-const recipeId = Number(id);
-const recipe = useRecipeStore((s) => s.recipes.find((r) => r.id === recipeId));
+  if (!recipe) return (
+    <div>
+      <Link to="/">← Back</Link>
+      <p>Recipe not found.</p>
+    </div>
+  );
 
+  return (
+    <div>
+      <Link to="/">← Back</Link>
+      <h1>{recipe.title}</h1>
+      <p>{recipe.description}</p>
+      {recipe.createdAt && <p><small>Created: {new Date(recipe.createdAt).toLocaleString()}</small></p>}
 
-if (!recipe) return <p>Recipe not found.</p>;
+      <div style={{ marginTop: 12 }}>
+        <button onClick={() => setEditing((v) => !v)}>{editing ? 'Cancel' : 'Edit'}</button>
+        <DeleteRecipeButton recipeId={recipe.id} />
+      </div>
 
+      {editing && <EditRecipeForm recipe={recipe} onDone={() => setEditing(false)} />}
+    </div>
+  );
+};
 
-return (
-<div>
-<h1>{recipe.title}</h1>
-<p>{recipe.description}</p>
-
-
-<p><strong>ID:</strong> {recipe.id}</p>
-
-
-<div style={{ marginTop: 12 }}>
-<Link to={`/recipes/${recipeId}/edit`}>Edit</Link>
-<DeleteRecipeButton id={recipeId} />
-</div>
-
-
-<div style={{ marginTop: 20 }}>
-<Link to="/">← Back to list</Link>
-</div>
-</div>
-);
-}
+export default RecipeDetails;

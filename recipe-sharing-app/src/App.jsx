@@ -56,6 +56,7 @@ function App() {
           />
           <Route path="/recipes/:id" element={<RecipeDetails />} />
           <Route path="/recipes/:id/edit" element={<EditRecipeForm />} />
+          <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </>
     </Router>
