@@ -3,7 +3,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import SearchBar from "./components/SearchBar";
-import { searchUsers } from "./services/githubService";
+import { searchUsers, fetchUserData } from "./services/githubService";
+import Search from "./components/Search";
 
 function App() {
   const [count, setCount] = useState(0)
@@ -33,6 +34,7 @@ function App() {
      <div className="app">
       <h1>GitHub User Search</h1>
       <SearchBar onSearch={handleSearch} />
+      <Search />
       <div className="results">
         {users.map((user) => (
           <div key={user.id} className="user-card">
