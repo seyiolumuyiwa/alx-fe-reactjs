@@ -1,26 +1,35 @@
 import { useState } from "react";
-import { advancedUserSearch } from "../services/githubService";
+import { fetchUserData, searchUsers } from "../services/githubService";
 
 const Search = () => {
-  const [username, setUsername] = useState("");
+  const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const [minRepos, setMinRepos] = useState("");
+  const [userData, setUserData] = useState(null);
   const [users, setUsers] = useState([]);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setPage(1);
+    setError("");
+    setUserData(null);
+    setUsers([]);
 
     try {
-      const data = await advancedUserSearch(username, location, minRepos, 1);
-      setUsers(data.items || []);
-      setHasMore(data.total_count > data.items.length);
+      if (location || minRepos) {
+        const result = await searchUsers(query, location, minRepos);
+        if (result.length === 0) {
+          setError("Looks like we cant find the user");
+        } else {
+          setUsers(result);
+        }
+      } else {
+        
+        const data = await fetchUserData(query);
+        setUserData(data);
+      }
     } catch (err) {
       setError("Looks like we cant find the user");
     } finally {
@@ -28,108 +37,93 @@ const Search = () => {
     }
   };
 
-  const handleLoadMore = async () => {
-    const nextPage = page + 1;
-    setLoading(true);
-
-    try {
-      const data = await advancedUserSearch(username, location, minRepos, nextPage);
-      setUsers((prev) => [...prev, ...(data.items || [])]);
-      setPage(nextPage);
-      setHasMore(data.total_count > users.length + (data.items?.length || 0));
-    } catch {
-      setError("Error loading more users");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-        GitHub User Search
-      </h1>
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-2xl font-bold text-center mb-4">GitHub User Search</h1>
 
-      
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-lg p-6 grid gap-4 sm:grid-cols-3"
-      >
+      {}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="border p-2 rounded w-full"
+          placeholder="Enter GitHub username"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="border p-2 rounded"
         />
         <input
           type="text"
-          placeholder="Location (e.g., Lagos)"
+          placeholder="Enter location (optional)"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded"
         />
         <input
           type="number"
-          placeholder="Min Repositories"
+          placeholder="Minimum repos (optional)"
           value={minRepos}
           onChange={(e) => setMinRepos(e.target.value)}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded"
         />
-
         <button
           type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 sm:col-span-3"
+          className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
         >
           Search
         </button>
       </form>
 
-      
-      {loading && <p className="text-center mt-4">Loading...</p>}
-      {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+      {}
+      <div className="mt-6 text-center">
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
 
-      
-      <div className="grid gap-4 mt-6">
-        {users.map((user) => (
-          <div
-            key={user.id}
-            className="flex items-center gap-4 bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-          >
+        {}
+        {userData && !users.length && (
+          <div className="mt-4">
             <img
-              src={user.avatar_url}
-              alt={user.login}
-              className="w-16 h-16 rounded-full"
+              src={userData.avatar_url}
+              alt={userData.login}
+              className="w-24 h-24 rounded-full mx-auto"
             />
-            <div className="text-left">
-              <h2 className="text-lg font-semibold">{user.login}</h2>
-              <p className="text-sm text-gray-600">
-                Score: {user.score.toFixed(2)}
-              </p>
-              <a
-                href={user.html_url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 underline"
-              >
-                View Profile
-              </a>
-            </div>
+            <h2 className="text-xl font-semibold mt-2">{userData.name || userData.login}</h2>
+            <a
+              href={userData.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              View Profile
+            </a>
           </div>
-        ))}
-      </div>
+        )}
 
-   
-      {hasMore && !loading && (
-        <div className="text-center mt-6">
-          <button
-            onClick={handleLoadMore}
-            className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700"
-          >
-            Load More
-          </button>
-        </div>
-      )}
+        {}
+        {users.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            {users.map((user) => (
+              <div
+                key={user.id}
+                className="border p-4 rounded-lg shadow hover:shadow-md transition"
+              >
+                <img
+                  src={user.avatar_url}
+                  alt={user.login}
+                  className="w-20 h-20 rounded-full mx-auto"
+                />
+                <h2 className="mt-2 text-lg font-medium">{user.login}</h2>
+                <a
+                  href={user.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline text-sm"
+                >
+                  View Profile
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
