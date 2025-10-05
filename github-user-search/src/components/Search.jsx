@@ -50,7 +50,7 @@ const Search = () => {
         GitHub User Search
       </h1>
 
-      {/* Search Form */}
+      
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded-lg p-6 grid gap-4 sm:grid-cols-3"
@@ -85,11 +85,11 @@ const Search = () => {
         </button>
       </form>
 
-      {/* Feedback messages */}
+      
       {loading && <p className="text-center mt-4">Loading...</p>}
       {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
-      {/* Results */}
+      
       <div className="grid gap-4 mt-6">
         {users.map((user) => (
           <div
@@ -119,7 +119,7 @@ const Search = () => {
         ))}
       </div>
 
-      {/* Load More button */}
+   
       {hasMore && !loading && (
         <div className="text-center mt-6">
           <button
