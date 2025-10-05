@@ -13,7 +13,6 @@ export const fetchUserData = async (username) => {
   }
 };
 
-
 export const searchUsers = async (query, location, minRepos) => {
   try {
    
@@ -24,7 +23,10 @@ export const searchUsers = async (query, location, minRepos) => {
 
     if (!searchQuery) throw new Error("Please enter a search term.");
 
-    const response = await axios.get(`${BASE_URL}/search/users?q=${searchQuery}`);
+
+    const url = `https://api.github.com/search/users?q=${searchQuery}`;
+
+    const response = await axios.get(url);
     return response.data.items;
   } catch (error) {
     console.error("Error performing advanced search:", error);
