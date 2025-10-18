@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const fetchPosts = async () => {
   const response = await fetch('https://jsonplaceholder.typicode.com/posts');
@@ -11,6 +12,11 @@ function PostsComponent() {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
+
+    cacheTime: 1000 * 60 * 5, // 5 minutes cache duration
+    staleTime: 1000 * 30, // data is "fresh" for 30 seconds
+    refetchOnWindowFocus: false, // don't refetch on tab/window focus
+    keepPreviousData: true, // retain previous data during refetch
   });
 
   if (isLoading) return <p className="text-center text-blue-600">Loading posts...</p>;
