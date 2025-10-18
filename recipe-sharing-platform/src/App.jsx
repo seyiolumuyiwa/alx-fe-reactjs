@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import HomePage from "./components/HomePage";
+import RecipeDetail from './components/RecipeDetail';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -30,6 +31,12 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       return <HomePage />;
+         <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
+      </Routes>
+    </Router>
     </>
   )
 }
