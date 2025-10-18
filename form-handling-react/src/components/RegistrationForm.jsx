@@ -1,27 +1,16 @@
 import { useState } from "react";
 
 function RegistrationForm() {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
-
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.username) newErrors.username = "Username is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.password) newErrors.password = "Password is required";
+    if (!username) newErrors.username = "Username is required";
+    if (!email) newErrors.email = "Email is required";
+    if (!password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -29,9 +18,11 @@ function RegistrationForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log("Form Submitted:", formData);
+      console.log("Form Submitted:", { username, email, password });
       alert("Registration successful!");
-      setFormData({ username: "", email: "", password: "" });
+      setUsername("");
+      setEmail("");
+      setPassword("");
     }
   };
 
@@ -50,9 +41,8 @@ function RegistrationForm() {
         <input
           type="text"
           name="username"
-          value={formData.username}           
-          /* ✅ Controlled input */
-          onChange={handleChange}
+          value={username}            
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Enter your username"
         />
@@ -67,9 +57,8 @@ function RegistrationForm() {
         <input
           type="email"
           name="email"
-          value={formData.email}              
-          /* ✅ Controlled input */
-          onChange={handleChange}
+          value={email}               
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Enter your email"
         />
@@ -84,9 +73,8 @@ function RegistrationForm() {
         <input
           type="password"
           name="password"
-          value={formData.password}          
-          /*Controlled input */
-          onChange={handleChange}
+          value={password}            
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Enter your password"
         />
