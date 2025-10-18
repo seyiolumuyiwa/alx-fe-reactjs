@@ -1,15 +1,19 @@
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+// src/components/Profile.jsx
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import ProfileDetails from './ProfileDetails'
+import ProfileSettings from './ProfileSettings'
 
-export default function Profile() {
+function Profile() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">User Profile</h1>
-      <nav className="flex gap-4 mb-4">
-        <Link to="details">Profile Details</Link>
-        <Link to="settings">Profile Settings</Link>
-      </nav>
-      <Outlet />
+    <div className="profile-container">
+      <h2>User Profile</h2>
+      <Routes>
+        <Route path="details" element={<ProfileDetails />} />
+        <Route path="settings" element={<ProfileSettings />} />
+      </Routes>
     </div>
-  );
+  )
 }
+
+export default Profile
