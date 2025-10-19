@@ -1,13 +1,17 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React from 'react'
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth' 
 
-// Simulated authentication
-const isAuthenticated = false; 
+function ProtectedRoute({ children }) {
+  const { user } = useAuth() 
 
-export default function ProtectedRoute({ children }) {
-  if (!isAuthenticated) {
-    alert('You must be logged in to view this page!');
-    return <Navigate to="/" replace />;
+  if (!user) {
+    // Redirect to login if no authenticated user
+    return <Navigate to="/login" replace />
   }
-  return children;
+
+  // Render the protected content if user exists
+  return children
 }
+
+export default ProtectedRoute
